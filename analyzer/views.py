@@ -1,3 +1,6 @@
 from django.shortcuts import render
+from .models import Candidate
 
-# Create your views here.
+def dashboard(request):
+    candidates = Candidate.objects.all().order_by('-score')
+    return render(request, "dashboard.html", {"candidates": candidates})
