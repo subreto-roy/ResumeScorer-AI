@@ -1,0 +1,129 @@
+{% extends 'analyzer/base.html' %}
+{% block title %}Analysis Result - {{ analysis.candidate_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">Analysis Result</h4>
+    <div>
+        <a href="{% url 'analyzer:analyze' %}" class="btn btn-outline-success btn-sm me-2">
+            <i class="fas fa-plus me-1"></i>Analyze Another
+        </a>
+        <a href="{% url 'analyzer:history' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-history me-1"></i>History
+        </a>
+    </div>
+</div>
+
+<!-- Score Header -->
+<div class="card p-4 mb-4">
+    <div class="row align-items-center">
+        <div class="col-auto">
+            {% with score=analysis.overall_score %}
+            <div class="score-circle {% if score >= 70 %}score-high{% elif score >= 40 %}score-mid{% else %}score-low{% endif %}">
+                {{ score|floatformat:0 }}%
+            </div>
+            {% endwith %}
+        </div>
+        <div class="col">
+            <h5 class="fw-bold mb-1">{{ analysis.candidate_name|default:"Unknown Candidate" }}</h5>
+            <p class="text-muted mb-1">Compared against: <strong>{{ analysis.reference_cv.name }}</strong></p>
+            <p class="text-muted small mb-0">Analyzed: {{ analysis.analyzed_at|date:"M d, Y H:i" }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Score Breakdown -->
+<div class="card p-4 mb-4">
+    <h6 class="fw-bold mb-3">Score Breakdown</h6>
+
+    {% for label, score in scores %}
+    <div class="mb-3">
+        <div class="d-flex justify-content-between mb-1">
+            <span class="small fw-semibold">{{ label }}</span>
+            <span class="small fw-bold">{{ score|floatformat:0 }}%</span>
+        </div>
+        <div class="progress">
+            <div class="progress-bar
+                {% if score >= 70 %}bg-success
+                {% elif score >= 40 %}bg-warning
+                {% else %}bg-danger{% endif %}"
+                style="width: {{ score }}%">
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Details -->
+<div class="row g-4">
+    <!-- Matched Skills -->
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <h6 class="fw-bold text-success mb-3"><i class="fas fa-check-circle me-2"></i>Matched Skills</h6>
+            {% with matched=analysis.analysis_result.matched_skills %}
+            {% if matched %}
+                {% for skill in matched %}
+                    <span class="badge bg-success me-1 mb-1">{{ skill }}</span>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted small">None identified.</p>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Missing Skills -->
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <h6 class="fw-bold text-danger mb-3"><i class="fas fa-times-circle me-2"></i>Missing Skills</h6>
+            {% with missing=analysis.analysis_result.missing_skills %}
+            {% if missing %}
+                {% for skill in missing %}
+                    <span class="badge bg-danger me-1 mb-1">{{ skill }}</span>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted small">None identified.</p>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Strengths -->
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <h6 class="fw-bold text-primary mb-3"><i class="fas fa-star me-2"></i>Strengths</h6>
+            <ul class="mb-0 ps-3">
+            {% for s in analysis.analysis_result.strengths %}
+                <li class="small mb-1">{{ s }}</li>
+            {% empty %}
+                <li class="text-muted small">None noted.</li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Weaknesses -->
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <h6 class="fw-bold text-warning mb-3"><i class="fas fa-exclamation-triangle me-2"></i>Areas to Improve</h6>
+            <ul class="mb-0 ps-3">
+            {% for w in analysis.analysis_result.weaknesses %}
+                <li class="small mb-1">{{ w }}</li>
+            {% empty %}
+                <li class="text-muted small">None noted.</li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Summary -->
+    {% if analysis.analysis_result.summary %}
+    <div class="col-12">
+        <div class="card p-4 border-start border-primary border-4">
+            <h6 class="fw-bold mb-2"><i class="fas fa-comment-alt me-2 text-primary"></i>AI Summary</h6>
+            <p class="mb-0">{{ analysis.analysis_result.summary }}</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

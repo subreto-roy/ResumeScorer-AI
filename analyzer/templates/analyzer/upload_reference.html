@@ -1,0 +1,31 @@
+{% extends 'analyzer/base.html' %}
+{% block title %}Upload Reference CV{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card p-4">
+            <h5 class="fw-bold mb-1"><i class="fas fa-upload me-2 text-primary"></i>Upload Reference CV</h5>
+            <p class="text-muted small mb-4">This CV will be used as the benchmark for matching candidates.</p>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Reference Name</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors }}</div>{% endif %}
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">CV File</label>
+                    {{ form.file }}
+                    <div class="form-text">Supported formats: PDF, DOCX, TXT</div>
+                    {% if form.file.errors %}<div class="text-danger small mt-1">{{ form.file.errors }}</div>{% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-cloud-upload-alt me-2"></i>Upload Reference CV
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

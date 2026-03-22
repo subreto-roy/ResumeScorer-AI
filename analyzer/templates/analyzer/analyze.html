@@ -1,0 +1,47 @@
+{% extends 'analyzer/base.html' %}
+{% block title %}Analyze CV{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card p-4">
+            <h5 class="fw-bold mb-1"><i class="fas fa-search me-2 text-success"></i>Analyze Candidate CV</h5>
+            <p class="text-muted small mb-4">Upload a candidate CV and compare it against AI.</p>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Select Reference CV</label>
+                    {{ form.reference_cv }}
+                    {% if form.reference_cv.errors %}<div class="text-danger small mt-1">{{ form.reference_cv.errors }}</div>{% endif %}
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Candidate CV File</label>
+                    {{ form.candidate_file }}
+                    <div class="form-text">Supported: PDF, DOCX, TXT</div>
+                    {% if form.candidate_file.errors %}<div class="text-danger small mt-1">{{ form.candidate_file.errors }}</div>{% endif %}
+                </div>
+
+                <div class="alert alert-info py-2 small">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Analysis may take 10-20 seconds depending on CV size.
+                </div>
+
+                <button type="submit" class="btn btn-success w-100" id="analyzeBtn">
+                    <i class="fas fa-robot me-2"></i>Analyze with AI
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelector('form').addEventListener('submit', function() {
+    const btn = document.getElementById('analyzeBtn');
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Analyzing...';
+    btn.disabled = true;
+});
+</script>
+{% endblock %}

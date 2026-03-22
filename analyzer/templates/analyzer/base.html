@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CV Analyzer{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #f0f2f5; }
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+        .sidebar .nav-link {
+            color: #a0aec0;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin: 2px 8px;
+            transition: all 0.2s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: rgba(99, 179, 237, 0.15);
+            color: #63b3ed;
+        }
+        .sidebar .brand { color: #fff; font-weight: 700; font-size: 1.2rem; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+        .score-circle {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: 700;
+        }
+        .score-high { background: #c6f6d5; color: #276749; }
+        .score-mid  { background: #fefcbf; color: #744210; }
+        .score-low  { background: #fed7d7; color: #822727; }
+        .progress { height: 10px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar d-flex flex-column p-3" style="width:240px; position:fixed; height:100vh;">
+        <div class="brand mb-4 px-2 pt-2">
+            <i class="fas fa-file-alt me-2 text-info"></i>CV Analyzer
+        </div>
+        <nav class="nav flex-column gap-1">
+            <a href="{% url 'analyzer:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                <i class="fas fa-home me-2"></i>Dashboard
+            </a>
+            <a href="{% url 'analyzer:upload_reference' %}" class="nav-link {% if request.resolver_match.url_name == 'upload_reference' %}active{% endif %}">
+                <i class="fas fa-upload me-2"></i>Upload Reference CV
+            </a>
+            <a href="{% url 'analyzer:reference_list' %}" class="nav-link {% if request.resolver_match.url_name == 'reference_list' %}active{% endif %}">
+                <i class="fas fa-folder me-2"></i>Reference CVs
+            </a>
+            <a href="{% url 'analyzer:analyze' %}" class="nav-link {% if request.resolver_match.url_name == 'analyze' %}active{% endif %}">
+                <i class="fas fa-search me-2"></i>Analyze CV
+            </a>
+            <a href="{% url 'analyzer:history' %}" class="nav-link {% if request.resolver_match.url_name == 'history' %}active{% endif %}">
+                <i class="fas fa-history me-2"></i>History
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main -->
+    <div class="flex-grow-1 p-4" style="margin-left:240px;">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

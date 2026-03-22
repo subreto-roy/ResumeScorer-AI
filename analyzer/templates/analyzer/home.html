@@ -1,0 +1,70 @@
+{% extends 'analyzer/base.html' %}
+{% block title %}Dashboard - CV Analyzer{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4">Dashboard</h4>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card p-4 text-center">
+            <div class="text-primary fs-1 fw-bold">{{ total_references }}</div>
+            <div class="text-muted mt-1">Reference CVs</div>
+            <a href="{% url 'analyzer:reference_list' %}" class="btn btn-sm btn-outline-primary mt-3">View All</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4 text-center">
+            <div class="text-success fs-1 fw-bold">{{ total_analyses }}</div>
+            <div class="text-muted mt-1">CVs Analyzed</div>
+            <a href="{% url 'analyzer:history' %}" class="btn btn-sm btn-outline-success mt-3">View History</a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-4 text-center">
+            <div class="text-info fs-1"><i class="fas fa-robot"></i></div>
+            <div class="text-muted mt-1">Powered by AI</div>
+            <a href="{% url 'analyzer:analyze' %}" class="btn btn-sm btn-outline-info mt-3">Analyze Now</a>
+        </div>
+    </div>
+</div>
+
+<div class="card p-4">
+    <h5 class="fw-bold mb-3">Recent Analyses</h5>
+    {% if recent_analyses %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Reference CV</th>
+                        <th>Overall Score</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for a in recent_analyses %}
+                    <tr>
+                        <td>{{ a.candidate_name|default:"Unknown" }}</td>
+                        <td><span class="badge bg-secondary">{{ a.reference_cv.name }}</span></td>
+                        <td>
+                            {% if a.overall_score >= 70 %}
+                                <span class="badge bg-success fs-6">{{ a.overall_score|floatformat:0 }}%</span>
+                            {% elif a.overall_score >= 40 %}
+                                <span class="badge bg-warning text-dark fs-6">{{ a.overall_score|floatformat:0 }}%</span>
+                            {% else %}
+                                <span class="badge bg-danger fs-6">{{ a.overall_score|floatformat:0 }}%</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small">{{ a.analyzed_at|date:"M d, Y" }}</td>
+                        <td><a href="{% url 'analyzer:result' a.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted text-center py-4">No analyses yet. <a href="{% url 'analyzer:analyze' %}">Analyze your first CV!</a></p>
+    {% endif %}
+</div>
+{% endblock %}

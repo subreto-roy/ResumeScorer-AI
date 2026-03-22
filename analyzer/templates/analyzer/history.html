@@ -1,0 +1,54 @@
+{% extends 'analyzer/base.html' %}
+{% block title %}Analysis History{% endblock %}
+
+{% block content %}
+<h4 class="fw-bold mb-4">Analysis History</h4>
+
+<div class="card">
+    {% if analyses %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Reference CV</th>
+                        <th>Skills</th>
+                        <th>Experience</th>
+                        <th>Education</th>
+                        <th>Overall</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for a in analyses %}
+                    <tr>
+                        <td class="fw-semibold">{{ a.candidate_name|default:"Unknown" }}</td>
+                        <td><span class="badge bg-secondary">{{ a.reference_cv.name }}</span></td>
+                        <td>{{ a.skills_score|floatformat:0 }}%</td>
+                        <td>{{ a.experience_score|floatformat:0 }}%</td>
+                        <td>{{ a.education_score|floatformat:0 }}%</td>
+                        <td>
+                            {% if a.overall_score >= 70 %}
+                                <span class="badge bg-success">{{ a.overall_score|floatformat:0 }}%</span>
+                            {% elif a.overall_score >= 40 %}
+                                <span class="badge bg-warning text-dark">{{ a.overall_score|floatformat:0 }}%</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ a.overall_score|floatformat:0 }}%</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small">{{ a.analyzed_at|date:"M d, Y" }}</td>
+                        <td><a href="{% url 'analyzer:result' a.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="fas fa-history fs-1 mb-3"></i>
+            <p>No analyses yet. <a href="{% url 'analyzer:analyze' %}">Analyze a CV now!</a></p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

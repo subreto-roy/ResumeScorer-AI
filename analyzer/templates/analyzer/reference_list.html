@@ -1,0 +1,58 @@
+{% extends 'analyzer/base.html' %}
+{% block title %}Reference CVs{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0">Reference CVs</h4>
+    <a href="{% url 'analyzer:upload_reference' %}" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus me-1"></i>Add New
+    </a>
+</div>
+
+<div class="card">
+    {% if references %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>File</th>
+                        <th>Text Extracted</th>
+                        <th>Uploaded</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for ref in references %}
+                    <tr>
+                        <td class="fw-semibold">{{ ref.name }}</td>
+                        <td><span class="badge bg-light text-dark">{{ ref.file.name|slice:"15:" }}</span></td>
+                        <td>
+                            {% if ref.extracted_text %}
+                                <span class="badge bg-success">Yes ({{ ref.extracted_text|length }} chars)</span>
+                            {% else %}
+                                <span class="badge bg-danger">No</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small">{{ ref.uploaded_at|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'analyzer:analyze' %}?ref={{ ref.pk }}" class="btn btn-sm btn-outline-success me-1">
+                                <i class="fas fa-search"></i> Analyze
+                            </a>
+                            <a href="{% url 'analyzer:delete_reference' ref.pk %}" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="fas fa-folder-open fs-1 mb-3"></i>
+            <p>No reference CVs yet. <a href="{% url 'analyzer:upload_reference' %}">Upload one!</a></p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
